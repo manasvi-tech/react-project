@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
 
+import './App.css';
+import Header from './Header';
+import Content from './Content';
+import Footer from './Footer';
 function App() {
+  
+{/* <p>index is where html is hosted and it imports app so app is basically the anchor for 
+  all the components you want to insert. press "alt+shift+r" to open the emmet bar and type 
+  rafce and delete the import statement
+</p> */}
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header/>
+      <Content/>
+      <Footer/>
     </div>
+   
   );
 }
 
+
+
 export default App;
+ {/* inside return() everything is jsx. Its the combination of javascript and xml.
+  jsx allows us to put javascript expressions in the code thats what makes it so powerful.
+*/}
+
+
+
+
