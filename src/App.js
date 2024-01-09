@@ -1,6 +1,6 @@
 
 
-import Header from './Header';
+import Header from './Header'
 import Content from './Content';
 import Footer from './Footer';
 function App() {
@@ -9,9 +9,10 @@ function App() {
   all the components you want to insert. press "alt+shift+r" to open the emmet bar and type 
   rafce and delete the import statement
 </p> */}
+
   return (
     <div className="App">
-      <Header/>
+      <Header title="Groceries"/>
       <Content/>
       <Footer/>
     </div>
