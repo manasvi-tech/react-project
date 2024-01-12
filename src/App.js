@@ -9,17 +9,37 @@ function App() {
 
   const API_URL='http://localhost:3500/items'
 
-const [items, setItems] = useState(
-  JSON.parse(localStorage.getItem('shoppinglist')) ?? []
-); //"??" uses the value next to it when the value before it becomes null otherwise gets items from the local storage
-
+const [items, setItems] = useState([]); 
   const[newItem,setNewItem] = useState('')
 
   const[search,setSearch] = useState('') //empty Strings
+  const [fetchError,setFetchError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(()=>{
-    localStorage.setItem('shoppinglist', JSON.stringify(items));  
-  },[items])
+    
+    const fetchItems = async () =>{
+      try{
+        const response = await fetch(API_URL);
+        if(!response.ok) throw Error ("Did not recieve expected data")
+        const listItems = await response.json();
+        
+        setItems(listItems)
+        setFetchError(null)
+      } catch (err){
+       
+        setFetchError(err.message)
+      } finally{
+        setIsLoading(false);
+      }
+      
+    }
+    setTimeout(() => {
+      (async () => await fetchItems())(); /* This is an asynchronous arrow function. The async keyword indicates that the function will contain asynchronous operations, and the await fetchItems() part means that the function will wait for the completion of the asynchronous fetchItems function. */
+    },2000)
+
+    
+  },[])
 
 
   const addItem = (item) =>{ 
@@ -50,19 +70,23 @@ const [items, setItems] = useState(
     <div className="App">
       <Header />
       <SearchItem
-      search={search}
-      setSearch={setSearch}>
+        search={search}
+        setSearch={setSearch}>
         
       </SearchItem>
       <AddItem 
         newItem={newItem}
         setNewItem={setNewItem}
         handleSubmit={handleSubmit}
-        />
-      <Content items={items.filter(item => ((item.item).toLowerCase()).includes(
-        search.toLowerCase()))} 
-      handleCheck={handleCheck}
-      handleDelete={handleDelete}/>
+      />
+        <main>
+          {isLoading && <p> Loading Items..</p>}
+          {fetchError && <p style={{color: 'red'}}>{`Error : ${fetchError}`}</p>}
+          {!fetchError && !isLoading && <Content items={items.filter(item => ((item.item).toLowerCase()).includes(
+          search.toLowerCase()))} 
+          handleCheck={handleCheck}
+          handleDelete={handleDelete}/>}
+      </main>
       <Footer length={items.length}/>
     </div>
    
