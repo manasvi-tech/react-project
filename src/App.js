@@ -6,35 +6,19 @@ import Footer from './Footer';
 import AddItem from './AddItem';
 import SearchItem from './SearchItem';
 function App() {
-  
-{/* <p>index is where html is hosted and it imports app so app is basically the anchor for 
-  all the components you want to insert. press "alt+shift+r" to open the emmet bar and type 
-  rafce and delete the import statement
-</p> */}
-  const [items, setItems] = useState([
-    {
-        id: 1,
-        checked: true,
-        item: "One half pound bag of Cocoa Covered Almonds Unsalted"
-    },
-    {
-        id: 2,
-        checked: false,
-        item: "Item 2"
-    },
-    {
-        id: 3,
-        checked: false,
-        item: "Item 3"
-    }
-  ] || []);
+
+  const API_URL='http://localhost:3500/items'
+
+const [items, setItems] = useState(
+  JSON.parse(localStorage.getItem('shoppinglist')) ?? []
+); //"??" uses the value next to it when the value before it becomes null otherwise gets items from the local storage
+
   const[newItem,setNewItem] = useState('')
 
   const[search,setSearch] = useState('') //empty Strings
 
   useEffect(()=>{
-    localStorage.setItem('shoppinglist', JSON.stringify(items));  //use effect runs at every render if there is no render,
-    //but here as it has a dependency i.e. an array. it will run when there is a change in the array its asynchronous
+    localStorage.setItem('shoppinglist', JSON.stringify(items));  
   },[items])
 
 
@@ -46,8 +30,7 @@ function App() {
   }
 
   const handleCheck = (id) => {
-    const listItems = items.map((item) => item.id === id ? { ...item, checked: !item.checked } : item); /* map through the items array and if you find 
-    the id corresponding to the one clicked make the check mark as marked */
+    const listItems = items.map((item) => item.id === id ? { ...item, checked: !item.checked } : item); 
     setItems(listItems);  //set the listItems. 
   }
 
@@ -77,7 +60,7 @@ function App() {
         handleSubmit={handleSubmit}
         />
       <Content items={items.filter(item => ((item.item).toLowerCase()).includes(
-        search.toLowerCase()))} //used for search feature if there is change it will be re-rendered and the items that match the searchbox will only be visible
+        search.toLowerCase()))} 
       handleCheck={handleCheck}
       handleDelete={handleDelete}/>
       <Footer length={items.length}/>
@@ -89,10 +72,7 @@ function App() {
 
 
 export default App;
- {/* inside return() everything is jsx. Its the combination of javascript and xml.
-  jsx allows us to put javascript expressions in the code thats what makes it so powerful.
-*/}
-
+ 
 
 
 
