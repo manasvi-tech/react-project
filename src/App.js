@@ -1,5 +1,5 @@
 
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import Header from './Header'
 import Content from './Content';
 import Footer from './Footer';
@@ -27,32 +27,33 @@ function App() {
         checked: false,
         item: "Item 3"
     }
-  ]);
+  ] || []);
   const[newItem,setNewItem] = useState('')
 
   const[search,setSearch] = useState('') //empty Strings
 
-  const setAndSaveItems = (newItems) => {
-    setItems(newItems);
-    localStorage.setItem('shoppinglist', JSON.stringify(newItems));
-  }
+  useEffect(()=>{
+    localStorage.setItem('shoppinglist', JSON.stringify(items));  //use effect runs at every render if there is no render,
+    //but here as it has a dependency i.e. an array. it will run when there is a change in the array its asynchronous
+  },[items])
+
 
   const addItem = (item) =>{ 
     const id = items.length ? items[items.length-1].id +1 : 1;
     const myNewItem = {id,checked:false,item};
     const listItems = [...items,myNewItem]
-    setAndSaveItems(listItems)  //saves the new changes
+    setItems(listItems)  //saves the new changes
   }
 
   const handleCheck = (id) => {
     const listItems = items.map((item) => item.id === id ? { ...item, checked: !item.checked } : item); /* map through the items array and if you find 
     the id corresponding to the one clicked make the check mark as marked */
-    setAndSaveItems(listItems);  //set the listItems. 
+    setItems(listItems);  //set the listItems. 
   }
 
   const handleDelete = (id) => {
     const listItems = items.filter((item) => item.id !== id);
-    setAndSaveItems(listItems);
+    setItems(listItems);
   }
 
   const handleSubmit = (e) =>{
