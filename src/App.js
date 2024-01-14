@@ -5,6 +5,8 @@ import Content from './Content';
 import Footer from './Footer';
 import AddItem from './AddItem';
 import SearchItem from './SearchItem';
+import apiRequest from './apiRequest';
+
 function App() {
 
   const API_URL='http://localhost:3500/items'
@@ -34,30 +36,99 @@ const [items, setItems] = useState([]);
       }
       
     }
+    
     setTimeout(() => {
       (async () => await fetchItems())(); /* This is an asynchronous arrow function. The async keyword indicates that the function will contain asynchronous operations, and the await fetchItems() part means that the function will wait for the completion of the asynchronous fetchItems function. */
     },2000)
 
-    
+    //Timeout isnt commonly used.
   },[])
 
 
-  const addItem = (item) =>{ 
-    const id = items.length ? items[items.length-1].id +1 : 1;
+  const addItem = async (item) =>{ 
+    const id = items.length ? parseInt(items[items.length-1].id) +1 : 1;
     const myNewItem = {id,checked:false,item};
     const listItems = [...items,myNewItem]
     setItems(listItems)  //saves the new changes
+
+    const postOptions = {
+      method : 'POST',
+      headers : {
+        'Content-Type' : 'application/json'
+      },
+      body : JSON.stringify(myNewItem),
+      
+    }
+    const result = await apiRequest(API_URL,postOptions);
+    if (result) setFetchError(result);
   }
 
-  const handleCheck = (id) => {
+  /* const handleCheck = async (id) => {
     const listItems = items.map((item) => item.id === id ? { ...item, checked: !item.checked } : item); 
     setItems(listItems);  //set the listItems. 
+
+    const myItem = listItems.filter((item) => item.id ===id);
+
+    const updateOptions = {
+      method:'PATCH',
+      headers : {
+        'Content-Type' : 'application/json'
+      },
+      body: JSON.stringify({checked : myItem[0].checked})
+    };
+    const reqUrl = `${API_URL}/${id}`;
+    const result = await apiRequest(reqUrl,updateOptions);
+    if (result) setFetchError(result);
+
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     const listItems = items.filter((item) => item.id !== id);
     setItems(listItems);
+
+
+    const deleteOptions = {
+      method : 'DELETE',
+      headers : {
+        'Content-Type' : 'application/json'
+      }
+    }
+      const reqUrl = `${API_URL}/${id}`;
+    const result = await apiRequest(reqUrl,deleteOptions);
+    if (result) setFetchError(result);
+
+   
+
+  } */
+
+  const handleCheck = async (id) => {
+    const listItems = items.map((item) => item.id === id ? { ...item, checked: !item.checked } : item);
+    setItems(listItems);
+
+    const myItem = listItems.filter((item) => item.id === id);
+    const updateOptions = {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ checked: myItem[0].checked })
+    };
+    const reqUrl = `${API_URL}/${id}`;
+    const result = await apiRequest(reqUrl, updateOptions);
+    if (result) setFetchError(result);
   }
+
+  const handleDelete = async (id) => {
+    const listItems = items.filter((item) => item.id !== id);
+    setItems(listItems);
+
+    const deleteOptions = { method: 'DELETE' };
+    const reqUrl = `${API_URL}/${id}`;
+    const result = await apiRequest(reqUrl, deleteOptions);
+    if (result) setFetchError(result);
+  }
+
+
 
   const handleSubmit = (e) =>{
     e.preventDefault();
@@ -95,7 +166,7 @@ const [items, setItems] = useState([]);
 
 
 
-export default App;
+export default App; 
  
 
 
